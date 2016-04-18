@@ -20,7 +20,7 @@ public class BaseGameLoop extends JPanel implements Runnable {
 	private int width;
 	private int height;
 	
-	public static double currFPS = 120D;
+	public static double currFPS = 25D;
 	public Graphics2D graphics2D;
 	private BufferedImage img;
 	

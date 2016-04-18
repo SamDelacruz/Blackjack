@@ -1,5 +1,7 @@
 package com.samdlc.blackjack.core;
 
+import javax.swing.event.MouseInputListener;
+
 import com.samdlc.blackjack.gamestate.GameStateManager;
 import com.samdlc.blackjack.main.resources.Assets;
 
@@ -18,7 +20,9 @@ public class GameLoop extends BaseGameLoop{
 		assets.init();
 		gsm = new GameStateManager();
 		gsm.init();
-		this.addMouseListener(new MouseInputHandler(gsm));
+		MouseInputListener mouseInput = new MouseInputHandler(gsm);
+		this.addMouseListener(mouseInput);
+		this.addMouseMotionListener(mouseInput);
 		super.init();
 	}
 	

@@ -14,4 +14,5 @@ public abstract class GameState {
 	public abstract void render(Graphics2D g);
 	public abstract void handleClick(int x, int y);
 	public abstract void handleAction(String action, Object data);
+	public abstract void handleHover(int x, int y);
 }

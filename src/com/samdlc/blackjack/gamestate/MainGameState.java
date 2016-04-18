@@ -18,9 +18,12 @@ public class MainGameState extends GameState {
 	public BufferedImage bg;
 	public State state;
 	public HUDState hudState;
+	private boolean showCoords = true;
+	private Point mouseAt;
 
 	public MainGameState(GameStateManager gsm) {
 		super(gsm);
+		this.mouseAt = new Point();
 	}
 
 	@Override
@@ -31,7 +34,28 @@ public class MainGameState extends GameState {
 
 	@Override
 	public void tick(double deltaTime) {
-		switch(this.state) {
+
+	}
+
+	@Override
+	public void render(Graphics2D g) {
+		// render bg
+		g.setColor(Colors.BOARD_GREEN);
+		g.fillRect(0, 0, Main.WIDTH, Main.HEIGHT);
+		g.setColor(Color.WHITE);
+		// render cards
+		// render gui
+		g.setColor(Colors.GUI_BG);
+		g.fillRect(0, Main.HEIGHT - (Main.HEIGHT / 4), Main.WIDTH, Main.HEIGHT / 4);
+		
+		g.setColor(Colors.GUI_BG);
+		g.fillRect(0, 0, Main.WIDTH, Main.HEIGHT / 12);
+		g.setColor(Color.WHITE);
+		
+		// render hud
+		this.hudState.render(g);
+		
+		switch (this.state) {
 		case BET_PLACEMENT:
 			break;
 		case DEALER_TURN:
@@ -48,25 +72,10 @@ public class MainGameState extends GameState {
 			break;
 		
 		}
-
-	}
-
-	@Override
-	public void render(Graphics2D g) {
-		// render bg
-		g.setColor(Colors.BOARD_GREEN);
-		g.fillRect(0, 0, Main.WIDTH, Main.HEIGHT);
-		g.setColor(Color.WHITE);
-		// render cards
-		// render gui
-		g.setColor(Colors.GUI_BG);
-		g.fillRect(0, Main.HEIGHT - (Main.HEIGHT / 4), Main.WIDTH, Main.HEIGHT / 4);
 		
-		g.setColor(Colors.GUI_BG);
-		g.fillRect(0, 0, Main.WIDTH, Main.HEIGHT / 16);
-		
-		// render hud
-		this.hudState.render(g);
+		if(this.showCoords) {
+			g.drawString(String.format("[%d,%d]", this.mouseAt.x, this.mouseAt.y), this.mouseAt.x, this.mouseAt.y);
+		}
 		
 		
 	}
@@ -89,9 +98,9 @@ public class MainGameState extends GameState {
 	@Override
 	public void handleAction(String action, Object data) {
 		switch (action) {
-		case "DEAL":
+		case "NG":
 			if(this.state == State.NEW_GAME) {
-				// Deal some cards
+				//Proceed to place bets
 				// Set next state
 				this.state = State.BET_PLACEMENT;
 				this.hudState = new BetPlacementHUDState(this);
@@ -104,6 +113,13 @@ public class MainGameState extends GameState {
 			break;
 		}
 		
+	}
+
+	@Override
+	public void handleHover(int x, int y) {
+		Point p = new Point(x, y);
+		this.hudState.handleHover(p);
+		this.mouseAt = p;
 	}
 
 }

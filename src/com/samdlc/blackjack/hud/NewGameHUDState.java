@@ -7,14 +7,14 @@ public class NewGameHUDState extends HUDState {
 
 	public NewGameHUDState(GameState gameState) {
 		super(gameState);
-		this.buttons.add(new ActionButton("Deal", Main.WIDTH / 2, 510, 80, 30, new DealAction()));
+		this.buttons.add(new ActionButton("Begin", Main.WIDTH / 2 - 40, 510, 80, 40, new DealAction()));
 	}
 	
 	private class DealAction implements Action {
 
 		@Override
 		public void handle(ActionButton a) {
-			gameState.handleAction("DEAL", null);
+			gameState.handleAction("NG", null);
 		}
 		
 	}

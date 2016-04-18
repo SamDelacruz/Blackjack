@@ -3,9 +3,11 @@ package com.samdlc.blackjack.core;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.event.MouseInputListener;
+
 import com.samdlc.blackjack.gamestate.GameStateManager;
 
-public class MouseInputHandler implements MouseListener {
+public class MouseInputHandler implements MouseInputListener {
 	
 	GameStateManager gsm;
 	
@@ -41,6 +43,17 @@ public class MouseInputHandler implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		gsm.states.peek().handleHover(e.getX(), e.getY());
 	}
 
 }
