@@ -12,7 +12,7 @@ import com.samdlc.blackjack.core.GameWindow;
 import com.samdlc.blackjack.hud.Action;
 import com.samdlc.blackjack.hud.ActionButton;
 import com.samdlc.blackjack.main.Main;
-import com.samdlc.blackjack.main.resources.Cards;
+import com.samdlc.blackjack.main.resources.CardSpriteManager;
 import com.samdlc.blackjack.main.resources.Colors;
 
 public class MenuState extends GameState {
@@ -53,10 +53,10 @@ public class MenuState extends GameState {
 			button.render(g);
 		}
 		
-		BufferedImage cardBack = Cards.getCard(6, 4);
-		BufferedImage cardJack = Cards.getCard(11, 3);
-		int cardW = Cards.W;
-		int cardH = Cards.H;
+		BufferedImage cardBack = CardSpriteManager.getCard(5, 4);
+		BufferedImage cardJack = CardSpriteManager.getCard(10, 3);
+		int cardW = CardSpriteManager.W;
+		int cardH = CardSpriteManager.H;
 		int cardY = 50;
 		g.drawImage(cardBack, Main.WIDTH / 2 - cardW / 2 - 10, cardY, cardW, cardH, null);
 		g.drawImage(cardJack, Main.WIDTH / 2 - cardW / 2 + 10, cardY, cardW, cardH, null);

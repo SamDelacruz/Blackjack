@@ -7,7 +7,7 @@ import java.util.Map;
 import com.samdlc.blackjack.core.ImageService;
 import com.samdlc.blackjack.util.Logger;
 
-public class Cards {
+public class CardSpriteManager {
 	public static BufferedImage spritesheet;
 	public final static int W = 72;
 	public final static int H = 100;
@@ -15,7 +15,7 @@ public class Cards {
 	
 	/**
 	 * 
-	 * @param value 1 - 13 (A - K)
+	 * @param index 0 - 12 (A - K)
 	 * @param suit
 	 * 	0 - hearts
 	 *  1 - diamonds
@@ -24,8 +24,8 @@ public class Cards {
 	 *  4 - misc / back
 	 * @return
 	 */
-	public static BufferedImage getCard(int value, int suit) {
-		String key = "" + value + suit;
+	public static BufferedImage getCard(int index, int suit) {
+		String key = "" + index + suit;
 		if(cache.containsKey(key)) {
 			return cache.get(key);
 		}
@@ -33,16 +33,16 @@ public class Cards {
 		Logger.info("CARD CACHE MISS: "+key);
 		
 		int y = suit * H;
-		int x = (value - 1) * W;
+		int x = index * W;
 		BufferedImage cardImg = spritesheet.getSubimage(x, y, W, H);
 		cache.put(key, cardImg);
 		return cardImg;
 	}
 	
 	public static void init() {
-		spritesheet = ImageService.loadFromFile(Cards.class, "cards.gif");
+		spritesheet = ImageService.loadFromFile(CardSpriteManager.class, "cards.gif");
 		for(int suit = 0; suit <= 4; suit++) {
-			for(int value = 1; value <= 13; value++) {
+			for(int value = 0; value < 13; value++) {
 				getCard(value, suit);
 			}
 		}
