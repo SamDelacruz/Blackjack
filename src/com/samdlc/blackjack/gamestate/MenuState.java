@@ -93,7 +93,7 @@ public class MenuState extends GameState {
 		Point p = new Point(x, y);
 		boolean hovering = false;
 		for (ActionButton button : buttons) {
-			if(button.contains(p)) {
+			if(button.contains(p) && button.isEnabled()) {
 				hovering = hovering | true;
 				button.hover(true);
 			} else {

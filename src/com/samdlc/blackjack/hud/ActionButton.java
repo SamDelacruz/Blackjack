@@ -107,5 +107,9 @@ public class ActionButton extends Rectangle {
 		this.visible = visible;
 		this.enabled = visible;
 	}
+
+	public boolean isEnabled() {
+		return this.enabled;
+	}
 	
 }

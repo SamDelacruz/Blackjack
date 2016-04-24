@@ -42,7 +42,7 @@ public abstract class HUDState {
 	public void handleHover(Point p) {
 		boolean hovering = false;
 		for (ActionButton button : buttons) {
-			if(button.contains(p)) {
+			if(button.contains(p) && button.isEnabled()) {
 				button.hover(true);
 				hovering = hovering | true;
 			} else {

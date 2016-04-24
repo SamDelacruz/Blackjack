@@ -17,6 +17,7 @@ public class Deck {
 		this.startSize = multiplier * N_SUITS * N_VALS;
 		this.cardsDealt = 0;
 		this.isShuffled = false;
+		this.cards = new Stack<>();
 		
 		for(int suit = 0; suit < N_SUITS; suit++) {
 			for(int i = 0; i < N_VALS; i++) {
