@@ -6,7 +6,6 @@ import java.util.Map;
 import com.samdlc.blackjack.gamestate.GameState;
 import com.samdlc.blackjack.main.Main;
 import com.samdlc.blackjack.main.resources.Chips;
-import com.samdlc.blackjack.util.Logger;
 
 public class BetPlacementHUDState extends HUDState {
 	
@@ -17,7 +16,12 @@ public class BetPlacementHUDState extends HUDState {
 		super(gameState);
 		this.chipButtons = new HashMap<>();
 	
-		dealButton = new ActionButton("Deal", Main.WIDTH / 2 - 40, 500, 80, 40, null);
+		dealButton = new ActionButton("Deal", Main.WIDTH / 2 - 40, 500, 80, 40, new Action() {
+			@Override
+			public void handle(ActionButton a) {
+				gameState.handleAction("DEAL", null);
+			}
+		});
 		dealButton.setEnabled(false);
 		this.buttons.add(dealButton);
 		
@@ -38,13 +42,34 @@ public class BetPlacementHUDState extends HUDState {
 			this.buttons.add(chipBtn);
 			this.chipButtons.put(chipBtn, value);
 		}
+	}
+
+	@Override
+	public void handleAction(String action, Object data) {
+		boolean handled = false;
 		
+		switch(action) {
+		case "ENABLE_DEAL":
+			boolean enabled = (boolean)data;
+			this.dealButton.setEnabled(enabled);
+			break;
+		case "DISABLE_BETS_ABOVE":
+			int val = (int)data;
+			for(ActionButton btn : this.chipButtons.keySet()){
+				if(this.chipButtons.get(btn) > val) {
+					btn.setEnabled(false);
+				}
+			}
+			break;
+		}
 		
+		if(!handled)
+			super.handleAction(action, data);
 	}
 	
 	private class ChipAction implements Action {
 		
-		int value;
+		public int value;
 		
 		public ChipAction(int value) {
 			this.value = value;
@@ -52,7 +77,7 @@ public class BetPlacementHUDState extends HUDState {
 
 		@Override
 		public void handle(ActionButton a) {
-			Logger.info(String.valueOf(this.value));
+			gameState.handleAction("BET_PLACE", this.value);
 		}
 		
 	}

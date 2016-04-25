@@ -54,4 +54,8 @@ public abstract class HUDState {
 		GameWindow.window.getRootPane().setCursor(new Cursor(cType));
 		
 	}
+	
+	public void handleAction(String action, Object data) {
+		
+	}
 }
