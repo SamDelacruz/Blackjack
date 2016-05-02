@@ -75,10 +75,14 @@ public class Hand {
 		
 		for(Card c : cards) {
 			int cval = c.getValue(!hasAce);
-			hasAce |= (cval == 1);
+			hasAce |= (cval == 11);
 			val += cval;
 		}
 		
+		if((val > 21) && hasAce) {
+			val -= 10;
+		}
+				
 		return val;
 	}
 

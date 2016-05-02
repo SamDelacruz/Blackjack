@@ -112,4 +112,8 @@ public class ActionButton extends Rectangle {
 		return this.enabled;
 	}
 	
+	public String getLabel() {
+		return label;
+	}
+	
 }

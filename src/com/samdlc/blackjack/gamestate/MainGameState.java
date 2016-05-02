@@ -36,10 +36,13 @@ public class MainGameState extends GameState {
 	private Player dealer;
 	private Wallet wallet;
 	private Deck deck;
+	
+	protected double dt;
 
 	public MainGameState(GameStateManager gsm) {
 		super(gsm);
 		this.mouseAt = new Point();
+		this.dt = 20.0;
 	}
 
 	@Override
@@ -60,7 +63,60 @@ public class MainGameState extends GameState {
 
 	@Override
 	public void tick(double deltaTime) {
+		if(state == State.DEALER_TURN) {
+			if(dt < 20) { dt += deltaTime; }
+			else {
+				dt = 0.0;
+				dealerAct();
+				if(game.getState() != com.samdlc.blackjack.model.Game.State.DEALER_TURN) {
+					this.state = State.EVALUATE;
+					Logger.info("EVALUATE HANDS");
+					evaluateHands();
+					dt = 20.0;
+				}
+			}
+		}
+	}
 
+	private void evaluateHands() {
+		boolean dealerBust = dealer.getActiveHand().isBust();
+		int dealerVal = dealer.getActiveHand().getValue();
+		
+		for(Hand h : player.getHands()) {
+			if(h.isBust()) {
+				Logger.info("Player hand BUST");
+				continue;
+			}
+			
+			if(dealerBust) {
+				int stake = h.getStake();
+				int winnings = 2 * stake;
+				Logger.info("Player won "+winnings);
+				wallet.add(winnings);
+				continue;
+			}
+			
+			if(h.getValue() > dealerVal) {
+				int stake = h.getStake();
+				int winnings = 2 * stake;
+				Logger.info("Player won "+winnings);
+				wallet.add(winnings);
+				continue;
+			}
+			
+			if(h.getValue() == dealerVal) {
+				int stake = h.getStake();
+				int winnings = stake;
+				Logger.info("Player won "+winnings+" (PUSH)");
+				wallet.add(winnings);
+				continue;
+			}
+			
+			Logger.info("Player hand lost");
+		}
+		
+		this.state = State.NEW_GAME;
+		this.hudState = new NewGameHUDState(this);
 	}
 
 	@Override
@@ -162,7 +218,8 @@ public class MainGameState extends GameState {
 		PLAYER_TURN,
 		DEALER_TURN,
 		WIN,
-		LOSE
+		LOSE,
+		EVALUATE
 	}
 
 	@Override
@@ -176,12 +233,15 @@ public class MainGameState extends GameState {
 		switch (action) {
 		case "NG":
 			if(this.state == State.NEW_GAME) {
-				//Proceed to place bets
+				// Proceed to place bets
 				// Set next state
 				this.state = State.BET_PLACEMENT;
+				this.player.clearHands();
+				this.dealer.clearHands();
 				this.hudState = new BetPlacementHUDState(this);
 			}
 			break;
+			
 		case "BET_PLACE":
 			int amt = (int)data;
 			this.player.placeBet(player.getActiveHand(), amt);
@@ -190,22 +250,68 @@ public class MainGameState extends GameState {
 			this.hudState.handleAction("DISABLE_BETS_ABOVE", remaining);
 			Logger.info("Balance: "+ this.wallet.getBalance());
 			break;
+			
 		case "DEAL":
 			this.hudState.handleAction("ENABLE_DEAL", false);
 			this.game.deal();
 			this.hudState = new PlayerActionHUDState(this);
 			this.state = State.PLAYER_TURN;
+			
+			if(this.player.getActiveHand().isBlackjack()) {
+				int stake = this.player.getActiveHand().getStake();
+				int winnings = (int) Math.floor(stake * 1.5);
+				this.wallet.add(winnings);
+				Logger.info("PLAYER BLACKJACK");
+				this.state = State.NEW_GAME;
+				this.hudState = new NewGameHUDState(this);
+			}
+
 			break;
 		case "HIT":
-			this.game.hit();
+			if(this.state == State.PLAYER_TURN){
+				this.game.hit();
+				Logger.info(this.player.getActiveHand().toString());
+				// Check for bust
+				if(this.playerActiveHandIsBust()) {
+					// Game over!
+					Logger.info("BUST");
+					this.state = State.NEW_GAME;
+					this.hudState = new NewGameHUDState(this);
+				}
+				
+				if(this.player.getActiveHand().is21()) {
+					Logger.info("Player hand is 21, auto-stand");
+					stand();
+				}
+			}
+			
 			break;
 		case "QUIT":
 			this.gsm.states.pop();
+			break;
+		case "STAND":
+			Logger.info("STAND");
+			stand();
 			break;
 		default:
 			break;
 		}
 		
+	}
+
+	private void stand() {
+		this.state = State.DEALER_TURN;
+		game.setState(com.samdlc.blackjack.model.Game.State.DEALER_TURN);
+		this.hudState.handleAction("HIDE", "ALL");
+	}
+	
+	private void dealerAct() {
+		this.game.dealerTurn();
+	}
+
+	private boolean playerActiveHandIsBust() {
+		Hand h = this.player.getActiveHand();
+		return h.isBust();
 	}
 
 	@Override

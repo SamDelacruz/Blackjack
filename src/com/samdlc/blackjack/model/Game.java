@@ -1,12 +1,9 @@
 package com.samdlc.blackjack.model;
 
-import java.util.Scanner;
-
 public class Game {
 	private Player player;
 	private Player dealer;
 	private Deck deck;
-	private Player currentPlayer;
 	private State state;
 	private Outcome outcome;
 	
@@ -15,7 +12,6 @@ public class Game {
 		this.dealer = dealer;
 		this.deck = deck;
 		deck.shuffle();
-		currentPlayer = player;
 		this.state = State.PLACE_BETS;
 		this.outcome = Outcome.NIL;
 	}
@@ -105,6 +101,7 @@ public class Game {
 		Hand h = dealer.getActiveHand();
 		if(!h.getCards().get(1).getFaceUp()) {
 			h.getCards().get(1).setFaceUp(true);
+			return;
 		}
 		if(h.getValue() > 16) {
 			state = State.RESULT;
@@ -122,7 +119,6 @@ public class Game {
 	public void reset() {
 		player.clearHands();
 		dealer.clearHands();
-		currentPlayer = player;
 		deck.shuffle();
 		this.state = State.PLACE_BETS;
 	}
@@ -147,52 +143,8 @@ public class Game {
 		tos += this.player.toString() + "\n";
 		return tos;
 	}
-	
-	public static void main(String[] args) {
-		Wallet wallet = new Wallet();
-		wallet.add(10000);
-		Player p = new Player("Player", wallet);
-		Player d = new Player("Dealer", null);
-		Deck deck = new Deck(6);
-		Game g = new Game(p, d, deck);
-		g.deal();
-		System.out.print(g.toString());
-		g.checkBlackjack();
-		System.out.print(g.toString());
-		
-		if(g.getState() == State.RESULT) {
-			System.out.println("Result: " + g.outcome.toString());
-			return;
-		}
-		
-		while(g.getState() == State.PLAYER_TURN) {
-			System.out.print(g.toString());
-			Scanner in = new Scanner(System.in);
 
-			int i = in.nextInt();
-			
-			switch(i) {
-			case 1: // hit
-				g.hit();
-				break;
-			case 2: // stand
-				g.stand();
-				break;
-			case 3: // split
-				break;
-			case 4: // double
-				break;
-			default:
-				break;
-			}
-		}
-		
-		while(g.getState() == State.DEALER_TURN) {
-			System.out.println(g.toString());
-			g.dealerTurn();
-		}
-		
-		System.out.println(g.toString());
-		
+	public void setState(State state) {
+		this.state = state;
 	}
 }
