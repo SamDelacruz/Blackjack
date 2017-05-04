@@ -41,12 +41,12 @@ public class PlayerActionHUDState extends HUDState {
 
 		private static final long serialVersionUID = 3095983120143260768L;
 
-		public PlayerActionButton(String label, int x, int y) {
+		public PlayerActionButton(final String label, int x, int y) {
 			super(label, x, y, 80, 40, new Action() {
 
 				@Override
 				public void handle(ActionButton a) {
-					gameState.handleAction(label, null);
+					PlayerActionHUDState.this.getGameState().handleAction(label, null);
 				}
 				
 			});

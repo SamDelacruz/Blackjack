@@ -19,7 +19,7 @@ public class BetPlacementHUDState extends HUDState {
 		dealButton = new ActionButton("Deal", Main.WIDTH / 2 - 40, 500, 80, 40, new Action() {
 			@Override
 			public void handle(ActionButton a) {
-				gameState.handleAction("DEAL", null);
+				BetPlacementHUDState.this.getGameState().handleAction("DEAL", null);
 			}
 		});
 		dealButton.setEnabled(false);

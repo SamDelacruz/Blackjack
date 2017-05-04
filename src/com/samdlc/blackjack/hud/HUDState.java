@@ -10,7 +10,11 @@ import com.samdlc.blackjack.gamestate.GameState;
 
 public abstract class HUDState {
 	protected ArrayList<ActionButton> buttons;
-	protected GameState gameState;
+	final GameState gameState;
+
+	public final GameState getGameState() {
+		return this.gameState;
+	}
 	
 	public HUDState(GameState gameState) {
 		this.buttons = new ArrayList<ActionButton>();
@@ -19,7 +23,7 @@ public abstract class HUDState {
 
 			@Override
 			public void handle(ActionButton a) {
-				gameState.handleAction("QUIT", null);
+				HUDState.this.getGameState().handleAction("QUIT", null);
 			}
 			
 		}));
